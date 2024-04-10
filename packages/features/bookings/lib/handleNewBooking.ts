@@ -548,6 +548,7 @@ export async function getBookingData<T extends z.ZodType>({
       calEventUserFieldsResponses: undefined,
       calEventResponses: undefined,
       customInputs: undefined,
+      attendeePhoneNumber: undefined,
     };
   }
   if (!reqBody.responses) {
@@ -654,6 +655,7 @@ async function createBooking({
         name: member.name,
         timeZone: member.timeZone,
         locale: member.language.locale,
+        phoneNumber: member.phoneNumber,
       }))
     );
   }
