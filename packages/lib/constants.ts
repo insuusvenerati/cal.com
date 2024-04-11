@@ -165,3 +165,5 @@ export const TRANSCRIPTION_STARTED_ICON = IS_PRODUCTION
 export const TRANSCRIPTION_STOPPED_ICON = IS_PRODUCTION
   ? `${WEBAPP_URL}/sparkles.svg`
   : `https://app.cal.com/sparkles.svg`;
+
+export const BOOKED_WITH_SMS_EMAIL = "booked-with-sms@cal.com";
