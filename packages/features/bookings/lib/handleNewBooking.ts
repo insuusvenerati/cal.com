@@ -275,13 +275,15 @@ export const getEventTypesFromDB = async (eventTypeId: number) => {
     },
   });
 
+  const isTeamEvent = !!eventType?.team;
+
   return {
     ...eventType,
     metadata: EventTypeMetaDataSchema.parse(eventType?.metadata || {}),
     recurringEvent: parseRecurringEvent(eventType?.recurringEvent),
     customInputs: customInputSchema.array().parse(eventType?.customInputs || []),
     locations: (eventType?.locations ?? []) as LocationObject[],
-    bookingFields: getBookingFieldsWithSystemFields(eventType || {}),
+    bookingFields: getBookingFieldsWithSystemFields({ ...eventType, isTeamEvent } || {}),
     isDynamic: false,
   };
 };
@@ -1006,9 +1008,11 @@ async function handler(
       ? getDefaultEvent(req.body.eventTypeSlug)
       : await getEventTypesFromDB(req.body.eventTypeId);
 
+  const isTeamEvent = !!eventType?.team ?? !!eventType?.teamId;
+
   eventType = {
     ...eventType,
-    bookingFields: getBookingFieldsWithSystemFields(eventType),
+    bookingFields: getBookingFieldsWithSystemFields({ ...eventType, isTeamEvent }),
   };
 
   const bookingDataSchema = bookingDataSchemaGetter({
