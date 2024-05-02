@@ -398,6 +398,16 @@ export async function expectBookingToBeInDatabase(
   );
 }
 
+export function expectSMSToBeTriggered({ sms, toNumber }: { sms: Fixtures["sms"]; toNumber: string }) {
+  expect(sms.get()).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        to: toNumber,
+      }),
+    ])
+  );
+}
+
 export function expectSuccessfulBookingCreationEmails({
   emails,
   organizer,
@@ -890,13 +900,17 @@ export function expectBookingCreatedWebhookToHaveBeenFired({
   subscriberUrl,
   paidEvent,
   videoCallUrl,
+  isEmailHidden = false,
+  isAttendeePhoneNumberHidden = false,
 }: {
   organizer: { email: string; name: string };
-  booker: { email: string; name: string };
+  booker: { email: string; name: string; attendeePhoneNumber?: string };
   subscriberUrl: string;
   location: string;
   paidEvent?: boolean;
   videoCallUrl?: string | null;
+  isEmailHidden?: boolean;
+  isAttendeePhoneNumberHidden?: boolean;
 }) {
   if (!paidEvent) {
     expectWebhookToHaveBeenCalledWith(subscriberUrl, {
@@ -907,7 +921,16 @@ export function expectBookingCreatedWebhookToHaveBeenFired({
         },
         responses: {
           name: { label: "your_name", value: booker.name, isHidden: false },
-          email: { label: "email_address", value: booker.email, isHidden: false },
+          email: { label: "email_address", value: booker.email, isHidden: isEmailHidden },
+          ...(booker.attendeePhoneNumber
+            ? {
+                attendeePhoneNumber: {
+                  label: "attendee_phone_number",
+                  value: booker.attendeePhoneNumber,
+                  isHidden: isAttendeePhoneNumberHidden,
+                },
+              }
+            : null),
           location: {
             label: "location",
             value: { optionValue: "", value: location },
@@ -931,6 +954,14 @@ export function expectBookingCreatedWebhookToHaveBeenFired({
             label: "email",
             value: booker.email,
           },
+          ...(attendeePhoneNumber
+            ? {
+                attendeePhoneNumber: {
+                  label: "attendee_phone_number",
+                  value: booker.attendeePhoneNumber,
+                },
+              }
+            : null),
           location: {
             label: "location",
             value: { optionValue: "", value: location },
