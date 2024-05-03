@@ -954,7 +954,7 @@ export function expectBookingCreatedWebhookToHaveBeenFired({
             label: "email",
             value: booker.email,
           },
-          ...(attendeePhoneNumber
+          ...(booker.attendeePhoneNumber
             ? {
                 attendeePhoneNumber: {
                   label: "attendee_phone_number",
