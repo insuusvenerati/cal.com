@@ -30,11 +30,11 @@ import { scheduleMandatoryReminder } from "@calcom/ee/workflows/lib/reminders/sc
 import {
   sendAttendeeRequestEmail,
   sendOrganizerRequestEmail,
-  sendRescheduledEmails,
+  sendRescheduledEmailsAndSMS,
   sendRoundRobinCancelledEmails,
-  sendRoundRobinRescheduledEmails,
+  sendRoundRobinRescheduledEmailsAndSMS,
   sendRoundRobinScheduledEmails,
-  sendScheduledEmails,
+  sendScheduledEmailsAndSMS,
 } from "@calcom/emails";
 import getICalUID from "@calcom/emails/lib/getICalUID";
 import { getBookingFieldsWithSystemFields } from "@calcom/features/bookings/lib/getBookingFields";
@@ -2098,12 +2098,12 @@ async function handler(
           originalBookingMemberEmails.find((orignalMember) => orignalMember.email === member.email)
         );
 
-        sendRoundRobinRescheduledEmails(copyEventAdditionalInfo, rescheduledMembers);
+        sendRoundRobinRescheduledEmailsAndSMS(copyEventAdditionalInfo, rescheduledMembers);
         sendRoundRobinScheduledEmails(copyEventAdditionalInfo, newBookedMembers);
         sendRoundRobinCancelledEmails(copyEventAdditionalInfo, cancelledMembers);
       } else {
         // send normal rescheduled emails (non round robin event, where organizers stay the same)
-        await sendRescheduledEmails({
+        await sendRescheduledEmailsAndSMS({
           ...copyEvent,
           additionalInformation: metadata,
           additionalNotes, // Resets back to the additionalNote input and not the override value
@@ -2238,7 +2238,7 @@ async function handler(
           })
         );
 
-        await sendScheduledEmails(
+        await sendScheduledEmailsAndSMS(
           {
             ...evt,
             additionalInformation: metadata,

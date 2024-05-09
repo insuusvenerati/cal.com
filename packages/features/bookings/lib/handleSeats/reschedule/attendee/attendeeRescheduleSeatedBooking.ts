@@ -2,7 +2,7 @@
 import { cloneDeep } from "lodash";
 
 import type EventManager from "@calcom/core/EventManager";
-import { sendRescheduledSeatEmail } from "@calcom/emails";
+import { sendRescheduledSeatEmailAndSMS } from "@calcom/emails";
 import prisma from "@calcom/prisma";
 import type { Person, CalendarEvent } from "@calcom/types/Calendar";
 
@@ -88,7 +88,7 @@ const attendeeRescheduleSeatedBooking = async (
     ? calendarResult?.updatedEvent[0]?.iCalUID
     : calendarResult?.updatedEvent?.iCalUID || undefined;
 
-  await sendRescheduledSeatEmail(copyEvent, seatAttendee as Person);
+  await sendRescheduledSeatEmailAndSMS(copyEvent, seatAttendee as Person);
   const filteredAttendees = originalRescheduledBooking?.attendees.filter((attendee) => {
     return attendee.email !== bookerEmail;
   });

@@ -3,7 +3,7 @@ import type { Prisma, Workflow, WorkflowsOnEventTypes, WorkflowStep } from "@pri
 import type { EventManagerUser } from "@calcom/core/EventManager";
 import EventManager from "@calcom/core/EventManager";
 import { scheduleMandatoryReminder } from "@calcom/ee/workflows/lib/reminders/scheduleMandatoryReminder";
-import { sendScheduledEmails } from "@calcom/emails";
+import { sendScheduledEmailsAndSMS } from "@calcom/emails";
 import { scheduleWorkflowReminders } from "@calcom/features/ee/workflows/lib/reminders/reminderScheduler";
 import getWebhooks from "@calcom/features/webhooks/lib/getWebhooks";
 import { scheduleTrigger } from "@calcom/features/webhooks/lib/scheduleTrigger";
@@ -103,7 +103,7 @@ export async function handleConfirmation(args: {
         }
       }
 
-      await sendScheduledEmails(
+      await sendScheduledEmailsAndSMS(
         { ...evt, additionalInformation: metadata },
         undefined,
         isHostConfirmationEmailsDisabled,
