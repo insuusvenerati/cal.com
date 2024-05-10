@@ -230,6 +230,7 @@ async function handler(req: CustomRequest) {
       name: attendee.name,
       email: attendee.email,
       timeZone: attendee.timeZone,
+      phoneNumber: attendee.phoneNumber,
       language: {
         translate: await getTranslation(attendee.locale ?? "en", "common"),
         locale: attendee.locale ?? "en",
