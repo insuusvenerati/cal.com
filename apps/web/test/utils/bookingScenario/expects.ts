@@ -835,13 +835,17 @@ export function expectBookingRequestedWebhookToHaveBeenFired({
   subscriberUrl,
   paidEvent,
   eventType,
+  isEmailHidden = false,
+  isAttendeePhoneNumberHidden = false,
 }: {
-  organizer: { email: string; name: string };
+  organizer: { email: string; name: string; attendeePhoneNumber?: string };
   booker: { email: string; name: string };
   subscriberUrl: string;
   location: string;
   paidEvent?: boolean;
   eventType: InputEventType;
+  isEmailHidden?: boolean;
+  isAttendeePhoneNumberHidden?: boolean;
 }) {
   // There is an inconsistency in the way we send the data to the webhook for paid events and unpaid events. Fix that and then remove this if statement.
   if (!paidEvent) {
@@ -862,8 +866,17 @@ export function expectBookingRequestedWebhookToHaveBeenFired({
           email: {
             label: "email_address",
             value: booker.email,
-            isHidden: false,
+            isHidden: isEmailHidden,
           },
+          ...(booker.attendeePhoneNumber
+            ? {
+                attendeePhoneNumber: {
+                  label: "attendee_phone_number",
+                  value: booker.attendeePhoneNumber,
+                  isHidden: isAttendeePhoneNumberHidden,
+                },
+              }
+            : null),
           location: {
             label: "location",
             value: { optionValue: "", value: location },
@@ -884,6 +897,14 @@ export function expectBookingRequestedWebhookToHaveBeenFired({
         responses: {
           name: { label: "name", value: booker.name },
           email: { label: "email", value: booker.email },
+          ...(booker.attendeePhoneNumber
+            ? {
+                attendeePhoneNumber: {
+                  label: "attendee_phone_number",
+                  value: booker.attendeePhoneNumber,
+                },
+              }
+            : null),
           location: {
             label: "location",
             value: { optionValue: "", value: location },
