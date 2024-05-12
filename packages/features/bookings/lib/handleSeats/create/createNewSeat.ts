@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash";
 import { uuid } from "short-uuid";
 
 import EventManager from "@calcom/core/EventManager";
-import { sendScheduledSeatsEmails } from "@calcom/emails";
+import { sendScheduledSeatsEmailsAndSMS } from "@calcom/emails";
 import { refreshCredentials } from "@calcom/features/bookings/lib/getAllCredentialsForUsersOnEvent/refreshCredentials";
 import {
   allowDisablingAttendeeConfirmationEmails,
@@ -133,7 +133,7 @@ const createNewSeat = async (
         isAttendeeConfirmationEmailDisabled = allowDisablingAttendeeConfirmationEmails(workflows);
       }
     }
-    await sendScheduledSeatsEmails(
+    await sendScheduledSeatsEmailsAndSMS(
       copyEvent,
       inviteeToAdd,
       newSeat,
