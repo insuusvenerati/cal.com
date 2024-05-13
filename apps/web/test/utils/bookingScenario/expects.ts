@@ -838,8 +838,8 @@ export function expectBookingRequestedWebhookToHaveBeenFired({
   isEmailHidden = false,
   isAttendeePhoneNumberHidden = false,
 }: {
-  organizer: { email: string; name: string; attendeePhoneNumber?: string };
-  booker: { email: string; name: string };
+  organizer: { email: string; name: string };
+  booker: { email: string; name: string; attendeePhoneNumber?: string };
   subscriberUrl: string;
   location: string;
   paidEvent?: boolean;
