@@ -2,8 +2,16 @@ import { z } from "zod";
 
 import { handleErrorsJson } from "@calcom/lib/errors";
 import { prisma } from "@calcom/prisma";
-import type { GetRecordingsResponseSchema, GetAccessLinkResponseSchema } from "@calcom/prisma/zod-utils";
-import { getRecordingsResponseSchema, getAccessLinkResponseSchema } from "@calcom/prisma/zod-utils";
+import type {
+  GetRecordingsResponseSchema,
+  GetAccessLinkResponseSchema,
+  TGetDailyWebhooks,
+} from "@calcom/prisma/zod-utils";
+import {
+  getRecordingsResponseSchema,
+  getAccessLinkResponseSchema,
+  getDailyWebhooks,
+} from "@calcom/prisma/zod-utils";
 import type { CalendarEvent } from "@calcom/types/Calendar";
 import type { CredentialPayload } from "@calcom/types/Credential";
 import type { PartialReference } from "@calcom/types/EventManager";
@@ -53,21 +61,6 @@ const getRooms = z
     id: z.string(),
   })
   .passthrough();
-
-const getWebhooks = z.array(
-  z
-    .object({
-      uuid: z.string(),
-      url: z.string().url(),
-      hmac: z.string(),
-      eventTypes: z.array(z.string()),
-      state: z.string(),
-      failedCount: z.number(),
-    })
-    .passthrough()
-);
-
-type TGetWebhooks = z.infer<typeof getWebhooks>;
 
 export interface DailyEventResult {
   id: string;
@@ -287,9 +280,9 @@ const DailyVideoApiAdapter = (): VideoApiAdapter => {
         throw new Error("Something went wrong! Unable to get transcription access link");
       }
     },
-    getWebhooks: async (): Promise<TGetWebhooks> => {
+    getWebhooks: async (): Promise<TGetDailyWebhooks> => {
       try {
-        const webhooks = await fetcher("/webhooks").then(getWebhooks.res);
+        const webhooks = await fetcher("/webhooks").then(getDailyWebhooks.res);
         return webhooks;
       } catch (err) {
         console.error("Error fetching daily webhooks", err);

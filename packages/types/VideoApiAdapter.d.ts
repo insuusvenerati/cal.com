@@ -1,4 +1,8 @@
-import type { GetRecordingsResponseSchema, GetAccessLinkResponseSchema } from "@calcom/prisma/zod-utils";
+import type {
+  GetRecordingsResponseSchema,
+  GetAccessLinkResponseSchema,
+  TGetDailyWebhooks,
+} from "@calcom/prisma/zod-utils";
 
 import type { EventBusyDate } from "./Calendar";
 import type { CredentialPayload } from "./Credential";
@@ -28,6 +32,8 @@ export type VideoApiAdapter =
       createInstantCalVideoRoom?(endTime: string): Promise<VideoCallData>;
 
       getAllTranscriptsAccessLinkFromRoomName?(roomName: string): Promise<Array<string>>;
+
+      getWebhooks?(): Promise<TGetDailyWebhooks>;
     }
   | undefined;
 
