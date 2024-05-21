@@ -103,7 +103,7 @@ export const handleSeatsEventTypeOnBooking = async (
   bookingInfo: Partial<
     Prisma.BookingGetPayload<{
       include: {
-        attendees: { select: { name: true; email: true } };
+        attendees: { select: { name: true; email: true; phoneNumber: true } };
         seatsReferences: { select: { referenceUid: true } };
         user: {
           select: {
@@ -123,8 +123,9 @@ export const handleSeatsEventTypeOnBooking = async (
   bookingInfo["responses"] = {};
   type seatAttendee = {
     attendee: {
-      email: string;
+      email: string | null;
       name: string;
+      phoneNumber: string | null;
     };
     id: number;
     data: Prisma.JsonValue;
@@ -143,6 +144,7 @@ export const handleSeatsEventTypeOnBooking = async (
           select: {
             name: true,
             email: true,
+            phoneNumber: true,
           },
         },
       },
@@ -160,7 +162,9 @@ export const handleSeatsEventTypeOnBooking = async (
   if (!eventType.seatsShowAttendees && !isHost) {
     if (seatAttendee) {
       const attendee = bookingInfo?.attendees?.find((a) => {
-        return a.email === seatAttendee?.attendee?.email;
+        return (
+          a.email === seatAttendee?.attendee?.email || a.phoneNumber === seatAttendee?.attendee?.phoneNumber
+        );
       });
       bookingInfo["attendees"] = attendee ? [attendee] : [];
     } else {
