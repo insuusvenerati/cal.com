@@ -154,7 +154,8 @@ type WhiteListedBookingProps = {
   title?: string;
   status: BookingStatus;
   attendees?: {
-    email: string;
+    email?: string;
+    phoneNumber?: string;
     bookingSeat?: AttendeeBookingSeatInput | null;
   }[];
   references?: (Omit<ReturnType<typeof getMockBookingReference>, "credentialId"> & {
