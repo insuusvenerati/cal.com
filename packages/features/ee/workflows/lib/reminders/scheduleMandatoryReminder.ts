@@ -2,7 +2,10 @@ import type { Workflow, WorkflowsOnEventTypes, WorkflowStep } from "@prisma/clie
 
 import type { getEventTypesFromDB } from "@calcom/features/bookings/lib/handleNewBooking";
 import { scheduleEmailReminder } from "@calcom/features/ee/workflows/lib/reminders/emailReminderManager";
-import type { BookingInfo } from "@calcom/features/ee/workflows/lib/reminders/smsReminderManager";
+import type {
+  BookingInfo,
+  AttendeeInBookingInfo,
+} from "@calcom/features/ee/workflows/lib/reminders/smsReminderManager";
 import type { getDefaultEvent } from "@calcom/lib/defaultEvents";
 import logger from "@calcom/lib/logger";
 import { WorkflowTriggerEvents, TimeUnit, WorkflowActions, WorkflowTemplates } from "@calcom/prisma/enums";
@@ -12,6 +15,8 @@ const log = logger.getSubLogger({ prefix: ["[scheduleMandatoryReminder]"] });
 export type NewBookingEventType =
   | Awaited<ReturnType<typeof getDefaultEvent>>
   | Awaited<ReturnType<typeof getEventTypesFromDB>>;
+
+export type AttendeeWithEmail = Omit<AttendeeInBookingInfo, "email"> & { email: string };
 
 export async function scheduleMandatoryReminder(
   evt: BookingInfo,
@@ -40,12 +45,16 @@ export async function scheduleMandatoryReminder(
 
     if (
       !hasExistingWorkflow &&
-      evt.attendees.some((attendee) => attendee.email.includes("@gmail.com")) &&
+      evt.attendees.some((attendee) => attendee.email?.includes("@gmail.com")) &&
       !requiresConfirmation
     ) {
       try {
-        const filteredAttendees =
-          evt.attendees?.filter((attendee) => attendee.email.includes("@gmail.com")) || [];
+        const filteredAttendees = (evt.attendees ?? []).reduce((acc: AttendeeWithEmail[], attendee) => {
+          if (!!attendee.email && attendee.email.includes("@gmail.com")) {
+            acc.push(attendee as AttendeeWithEmail);
+          }
+          return acc;
+        }, []);
 
         await scheduleEmailReminder({
           evt,

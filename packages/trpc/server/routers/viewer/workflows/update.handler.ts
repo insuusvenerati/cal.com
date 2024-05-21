@@ -346,7 +346,9 @@ export const updateHandler = async ({ ctx, input }: UpdateOptions) => {
                   sendTo = [bookingInfo.organizer?.email];
                   break;
                 case WorkflowActions.EMAIL_ATTENDEE:
-                  sendTo = bookingInfo.attendees.map((attendee) => attendee.email);
+                  sendTo = bookingInfo.attendees
+                    .map((attendee) => attendee.email)
+                    .filter((email): email is string => !!email);
                   break;
                 case WorkflowActions.EMAIL_ADDRESS:
                   await verifyEmailSender(step.sendTo || "", user.id, userWorkflow.teamId, ctx.prisma);
@@ -576,7 +578,9 @@ export const updateHandler = async ({ ctx, input }: UpdateOptions) => {
                 sendTo = [bookingInfo.organizer?.email];
                 break;
               case WorkflowActions.EMAIL_ATTENDEE:
-                sendTo = bookingInfo.attendees.map((attendee) => attendee.email);
+                sendTo = bookingInfo.attendees
+                  .map((attendee) => attendee.email)
+                  .filter((email): email is string => !!email);
                 break;
               case WorkflowActions.EMAIL_ADDRESS:
                 sendTo = newStep.sendTo ? [newStep.sendTo] : [];
@@ -723,7 +727,9 @@ export const updateHandler = async ({ ctx, input }: UpdateOptions) => {
                   sendTo = [bookingInfo.organizer?.email];
                   break;
                 case WorkflowActions.EMAIL_ATTENDEE:
-                  sendTo = bookingInfo.attendees.map((attendee) => attendee.email);
+                  sendTo = bookingInfo.attendees
+                    .map((attendee) => attendee.email)
+                    .filter((email): email is string => !!email);
                   break;
                 case WorkflowActions.EMAIL_ADDRESS:
                   sendTo = step.sendTo ? [step.sendTo] : [];
