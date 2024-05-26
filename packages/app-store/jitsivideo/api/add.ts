@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import createSubTeamCredentials from "@calcom/app-store/_utils/createSubTeamCredentials";
 import { throwIfNotHaveAdminAccessToTeam } from "@calcom/app-store/_utils/throwIfNotHaveAdminAccessToTeam";
 import prisma from "@calcom/prisma";
 
@@ -38,6 +39,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         appId: "jitsi",
       },
     });
+    if (teamId) {
+      createSubTeamCredentials({
+        teamId: Number(teamId),
+        userId: req.session.user.id,
+        appId: "jitsi",
+        appType,
+      });
+    }
     if (!installation) {
       throw new Error("Unable to create user credential for jitsivideo");
     }

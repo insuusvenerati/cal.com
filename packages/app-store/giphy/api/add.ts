@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import createSubTeamCredentials from "@calcom/app-store/_utils/createSubTeamCredentials";
 import prisma from "@calcom/prisma";
 
 import getInstalledAppPath from "../../_utils/getInstalledAppPath";
@@ -40,6 +41,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         appId: "giphy",
       },
     });
+
+    if (teamId) {
+      createSubTeamCredentials({
+        teamId,
+        userId,
+        appId: "giphy",
+        appType,
+      });
+    }
     if (!installation) {
       throw new Error("Unable to create user credential for giphy");
     }

@@ -61,7 +61,15 @@ export type EventTypeAppSettingsComponentProps = {
   // Limit what data should be accessible to apps\
   eventType: Pick<
     z.infer<typeof EventTypeModel>,
-    "id" | "title" | "description" | "teamId" | "length" | "recurringEvent" | "seatsPerTimeSlot" | "team"
+    | "id"
+    | "title"
+    | "description"
+    | "teamId"
+    | "length"
+    | "recurringEvent"
+    | "seatsPerTimeSlot"
+    | "team"
+    | "users"
   > & {
     URL: string;
   };

@@ -36,22 +36,25 @@ const createOAuthAppCredential = async (
           some: {
             userId: req.session?.user.id,
             accepted: true,
+            role: {
+              in: ["ADMIN", "OWNER"],
+            },
           },
         },
       },
-      select: { id: true, members: { select: { userId: true } } },
+      select: {
+        id: true,
+        members: { select: { userId: true } },
+        isOrganization: true,
+        children: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     if (!team) throw new Error("User does not belong to the team");
-
-    await prisma.credential.create({
-      data: {
-        type: appData.type,
-        key: key || {},
-        teamId: state.teamId,
-        appId: appData.appId,
-      },
-    });
 
     return;
   }

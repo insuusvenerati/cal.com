@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 
+import createSubTeamCredentials from "@calcom/app-store/_utils/createSubTeamCredentials";
 import { HttpError } from "@calcom/lib/http-error";
 import prisma from "@calcom/prisma";
 import type { UserProfile } from "@calcom/types/UserProfile";
@@ -51,6 +52,20 @@ export async function createDefaultInstallation({
       billingCycleStart,
     },
   });
+
+  if (teamId) {
+    await createSubTeamCredentials({
+      teamId,
+      userId: user.id,
+      appType,
+      key,
+      appId: slug,
+      subscriptionId,
+      paymentStatus,
+      billingCycleStart,
+    });
+  }
+
   if (!installation) {
     throw new Error(`Unable to create user credential for type ${appType}`);
   }
