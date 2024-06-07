@@ -747,10 +747,12 @@ const Attendee = (attendeeProps: AttendeeProps & NoShowProps) => {
           <DropdownItem
             StartIcon={isCopied ? "clipboard-check" : "clipboard"}
             onClick={(e) => {
-              e.preventDefault();
-              copyToClipboard(email);
-              setOpenDropdown(false);
-              showToast(t("email_copied"), "success");
+              if (email) {
+                e.preventDefault();
+                copyToClipboard(email);
+                setOpenDropdown(false);
+                showToast(t("email_copied"), "success");
+              }
             }}>
             {!isCopied ? t("copy") : t("copied")}
           </DropdownItem>
@@ -761,9 +763,11 @@ const Attendee = (attendeeProps: AttendeeProps & NoShowProps) => {
               <DropdownItem
                 data-testid="unmark-no-show"
                 onClick={(e) => {
-                  setOpenDropdown(false);
-                  toggleNoShow({ attendee: { noShow: false, email }, bookingUid });
-                  e.preventDefault();
+                  if (email) {
+                    setOpenDropdown(false);
+                    toggleNoShow({ attendee: { noShow: false, email }, bookingUid });
+                    e.preventDefault();
+                  }
                 }}
                 StartIcon="eye">
                 {t("unmark_as_no_show")}
@@ -772,9 +776,11 @@ const Attendee = (attendeeProps: AttendeeProps & NoShowProps) => {
               <DropdownItem
                 data-testid="mark-no-show"
                 onClick={(e) => {
-                  setOpenDropdown(false);
-                  toggleNoShow({ attendee: { noShow: true, email }, bookingUid });
-                  e.preventDefault();
+                  if (email) {
+                    setOpenDropdown(false);
+                    toggleNoShow({ attendee: { noShow: true, email }, bookingUid });
+                    e.preventDefault();
+                  }
                 }}
                 StartIcon="eye-off">
                 {t("mark_as_no_show")}
@@ -826,7 +832,11 @@ const GroupedAttendees = (groupedAttendeeProps: GroupedAttendeeProps) => {
   });
 
   const onSubmit = (data: { attendees: AttendeeProps[] }) => {
-    const filteredData = data.attendees.slice(1);
+    const filteredData = data.attendees
+      .slice(1)
+      .filter(
+        (attendee): attendee is AttendeeProps & { email: string } => typeof attendee.email === "string"
+      );
     noShowMutation.mutate({ bookingUid, attendees: filteredData });
     setOpenDropdown(false);
   };
